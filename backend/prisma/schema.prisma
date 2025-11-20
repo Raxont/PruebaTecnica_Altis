@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  users     User[]
+  issues    Issue[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  password       String
+  name           String
+  organizationId String       @map("organization_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedIssues Issue[]      @relation("AssignedIssues")
+  createdIssues  Issue[]      @relation("CreatedIssues")
+  comments       Comment[]
+
+  @@map("users")
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      Status   @default(TODO)
+  priority    Priority @default(MED)
+  labels      String[]
+  assigneeId  String?  @map("assignee_id")
+  creatorId   String   @map("creator_id")
+  orgId       String   @map("org_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  assignee     User?        @relation("AssignedIssues", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creator      User         @relation("CreatedIssues", fields: [creatorId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+  activities   Activity[]
+
+  @@index([orgId, status])
+  @@index([assigneeId])
+  @@map("issues")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  issueId   String   @map("issue_id")
+  authorId  String   @map("author_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  issue  Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  issueId   String   @map("issue_id")
+  action    String
+  field     String?
+  oldValue  String?  @map("old_value")
+  newValue  String?  @map("new_value")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  issue Issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
+
+enum Status {
+  TODO        @map("todo")
+  IN_PROGRESS @map("in_progress")
+  DONE        @map("done")
+}
+
+enum Priority {
+  LOW  @map("low")
+  MED  @map("med")
+  HIGH @map("high")
+}
