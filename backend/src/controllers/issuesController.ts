@@ -78,7 +78,7 @@ export const getIssueById = async (req: Request, res: Response) => {
 
     const issue = await prisma.issue.findFirst({
       where: {
-        id,
+        id: parseInt(id), // ← Convertir a número
         orgId: req.user!.organizationId,
       },
       include: {
@@ -205,7 +205,7 @@ export const updateIssue = async (req: Request, res: Response) => {
     // Verificar que el issue existe y pertenece a la org
     const existingIssue = await prisma.issue.findFirst({
       where: {
-        id,
+        id: parseInt(id),
         orgId: req.user!.organizationId,
       },
     });
@@ -244,7 +244,7 @@ export const updateIssue = async (req: Request, res: Response) => {
 
     // Actualizar issue
     const issue = await prisma.issue.update({
-      where: { id },
+      where: { id: parseInt(id) },
       data: updates,
       include: {
         assignee: {
@@ -291,7 +291,7 @@ export const deleteIssue = async (req: Request, res: Response) => {
 
     const issue = await prisma.issue.findFirst({
       where: {
-        id,
+        id: parseInt(id),
         orgId: req.user!.organizationId,
       },
     });
@@ -303,7 +303,7 @@ export const deleteIssue = async (req: Request, res: Response) => {
       });
     }
 
-    await prisma.issue.delete({ where: { id } });
+    await prisma.issue.delete({ where: { id: parseInt(id) } });
 
     res.json({ message: 'Issue deleted successfully' });
   } catch (error) {
