@@ -24,7 +24,7 @@ export const getIssues = async (req: Request, res: Response) => {
 
     if (status) where.status = status;
     if (priority) where.priority = priority;
-    if (assigneeId) where.assigneeId = assigneeId;
+    if (assigneeId) where.assigneeId = parseInt(assigneeId);
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
