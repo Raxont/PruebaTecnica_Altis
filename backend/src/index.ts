@@ -7,6 +7,7 @@ import { generalLimiter } from './middleware/rateLimit';
 
 import authRoutes from './routes/auth';
 import issuesRoutes from './routes/issues';
+import commentRoutes from './routes/comments';
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ app.use(generalLimiter);
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/issues', issuesRoutes);
-// app.use('/api/comments', authenticateToken, commentsRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Error handler
 app.use(globalErrorHandler);

@@ -46,3 +46,12 @@ export interface IssueFilters {
   page?: number;
   limit?: number;
 }
+
+export interface CreateCommentDTO {
+  content: string;
+  issueId: number;
+}
+
+export interface UpdateCommentDTO {
+  content: string;
+}
