@@ -16,6 +16,7 @@ export default function DashboardPage() {
     search: '',
   })
   const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
 
   const { data: usersData } = useQuery<User[]>({
     queryKey: ['users'],
@@ -26,11 +27,11 @@ export default function DashboardPage() {
   })
 
   const { data, isLoading } = useQuery<IssuesResponse>({
-    queryKey: ['issues', filters.status, filters.priority, filters.assigneeId, filters.search, page],
+    queryKey: ['issues', filters.status, filters.priority, filters.assigneeId, filters.search, page, limit],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10',
+        limit: limit.toString(),
         ...(filters.status && { status: filters.status }),
         ...(filters.priority && { priority: filters.priority }),
         ...(filters.assigneeId && { assigneeId: filters.assigneeId }),
@@ -70,6 +71,26 @@ export default function DashboardPage() {
           <span className="text-lg">+</span>
           New Issue
         </Link>
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-gray-700">Show:</label>
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(parseInt(e.target.value))
+              setPage(1)
+            }}
+            className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          <span className="text-sm text-gray-600">issues per page</span>
+        </div>
       </div>
 
       <IssueFilters
@@ -114,7 +135,7 @@ export default function DashboardPage() {
                   Page {page} of {data.pagination.totalPages}
                 </span>
                 <span className="text-xs text-gray-500">
-                  ({data.pagination.total} total)
+                  (total {data.pagination.total})
                 </span>
               </div>
               <button
