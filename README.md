@@ -574,6 +574,22 @@ Este proyecto fue creado como prueba técnica y es de uso libre para fines educa
 
 Tomé como referencia mi proyecto previo desarrollado con Express, **CompraVenta_Artesanias** (URL: https://github.com/Raxont/CompraVenta_Artesanias), del cual utilicé la lógica de sus controladores como guía para la implementación en este proyecto. Ademas, reutilicé parte de la lógica aplicada en middleware como `corsConfig` y `errorHandling`, manteniendo una estructura coherente y facil para mi entendimiento.
 
+## 🎥 Videos demostrativos
+
+### Video Filtros
+<video width="600" controls>
+  <source src="https://raw.githubusercontent.com/Raxont/PruebaTecnica_Altis/main/videos/2025-11-21%2010-52-28.mp4" type="video/mp4">
+  Tu navegador no soporta reproducción de video.
+</video>
+
+---
+
+### Video DnD
+<video width="600" controls>
+  <source src="https://raw.githubusercontent.com/Raxont/PruebaTecnica_Altis/main/videos/2025-11-21%2010-57-00.mp4" type="video/mp4">
+  Tu navegador no soporta reproducción de video.
+</video>
+
 ## 👤 Autor
 
 **Camilo Navas**
