@@ -582,13 +582,16 @@ Tomé como referencia mi proyecto previo desarrollado con Express, **CompraVenta
   Tu navegador no soporta reproducción de video.
 </video>
 
----
+[Si no funciona el video haz click aqui para descargarlo](https://raw.githubusercontent.com/Raxont/PruebaTecnica_Altis/main/videos/2025-11-21%2010-52-28.mp4)
+
 
 ### Video DnD
 <video width="600" controls>
   <source src="https://raw.githubusercontent.com/Raxont/PruebaTecnica_Altis/main/videos/2025-11-21%2010-57-00.mp4" type="video/mp4">
   Tu navegador no soporta reproducción de video.
 </video>
+
+[Si no funciona el video haz click aqui para descargarlo](https://raw.githubusercontent.com/Raxont/PruebaTecnica_Altis/main/videos/2025-11-21%2010-57-00.mp4)
 
 ## 👤 Autor
 
