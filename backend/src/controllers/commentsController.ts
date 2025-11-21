@@ -88,13 +88,23 @@ export const createComment = async (req: Request, res: Response) => {
       },
     });
 
-    // Crear actividad
+    // Obtener nombre del usuario actual
+    const currentUser = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      select: { name: true },
+    });
+
+    // Crear actividad con info del autor y preview del comentario
+    const commentPreview = content.length > 50
+      ? content.substring(0, 50) + '...'
+      : content;
+
     await prisma.activity.create({
       data: {
         issueId,
         action: 'added comment',
-        field: null,
-        newValue: null,
+        field: currentUser?.name || 'Unknown',
+        newValue: commentPreview,
       },
     });
 
@@ -203,16 +213,27 @@ export const deleteComment = async (req: Request, res: Response) => {
       });
     }
 
+    // Obtener info del autor antes de eliminar
+    const author = await prisma.user.findUnique({
+      where: { id: existingComment.authorId },
+      select: { name: true },
+    });
+
     await prisma.comment.delete({
       where: { id: parseInt(id) },
     });
 
-    // Crear actividad de eliminación
+    // Crear actividad de eliminación con detalles
+    const commentPreview = existingComment.content.length > 50
+      ? existingComment.content.substring(0, 50) + '...'
+      : existingComment.content;
+
     await prisma.activity.create({
       data: {
         issueId: existingComment.issueId,
         action: 'deleted comment',
-        field: null,
+        field: author?.name || 'Unknown',
+        oldValue: commentPreview,
         newValue: null,
       },
     });

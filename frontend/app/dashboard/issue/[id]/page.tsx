@@ -187,13 +187,39 @@ export default function IssueDetailPage() {
                       <span className="font-semibold capitalize">{activity.action}</span>
                       {activity.field && (
                         <span className="text-gray-600">
-                          {' '}{activity.field}
-                          {activity.oldValue && activity.newValue && (
+                          {activity.action === 'deleted comment' ? (
                             <>
-                              {' from '}
-                              <span className="font-medium text-red-600">{activity.oldValue}</span>
-                              {' to '}
-                              <span className="font-medium text-green-600">{activity.newValue}</span>
+                              {' by '}
+                              <span className="font-medium text-blue-600">{activity.field}</span>
+                              {activity.oldValue && (
+                                <>
+                                  {': '}
+                                  <span className="italic text-gray-500">"{activity.oldValue}"</span>
+                                </>
+                              )}
+                            </>
+                          ) : activity.action === 'added comment' ? (
+                            <>
+                              {' by '}
+                              <span className="font-medium text-blue-600">{activity.field}</span>
+                              {activity.newValue && (
+                                <>
+                                  {': '}
+                                  <span className="italic text-gray-500">"{activity.newValue}"</span>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {' '}{activity.field}
+                              {activity.oldValue && activity.newValue && (
+                                <>
+                                  {' from '}
+                                  <span className="font-medium text-red-600">{activity.oldValue}</span>
+                                  {' to '}
+                                  <span className="font-medium text-green-600">{activity.newValue}</span>
+                                </>
+                              )}
                             </>
                           )}
                         </span>
