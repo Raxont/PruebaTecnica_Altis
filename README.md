@@ -2,7 +2,7 @@
 
 Sistema de gestión de tickets con tablero Kanban, filtros avanzados, comentarios y seguimiento de actividades.
 
-![Tech Stack](https://img.shields.io/badge/Stack-TypeScript%20%7C%20Next.js%20%7C%20Express%20%7C%20Prisma%20%7C%20PostgreSQL-blue)
+![Tech Stack](https://img.shields.io/badge/Stack-TypeScript%20%7C%20React%20%7C%20Next.js%20%7C%20Express%20%7C%20Prisma%20%7C%20PostgreSQL-blue)
 
 ## 📋 Características
 
@@ -15,6 +15,7 @@ Sistema de gestión de tickets con tablero Kanban, filtros avanzados, comentario
 - ✅ Paginación server-side
 - ✅ Rate limiting y CORS configurado
 - ✅ Manejo de errores centralizado
+- ✅ Estructura de carpetas: MVC sin usar los servicios
 
 ### Frontend
 - ✅ Tablero Kanban con drag & drop funcional
@@ -39,7 +40,7 @@ Sistema de gestión de tickets con tablero Kanban, filtros avanzados, comentario
 #### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/Raxont/PruebaTecnica_Altis
-cd issue-tracker-kanban
+cd PruebaTecnica_Altis
 ```
 
 #### 2. Backend
@@ -569,7 +570,9 @@ npm run lint         # Linter ESLint
 
 Este proyecto fue creado como prueba técnica y es de uso libre para fines educativos.
 
----
+## :mag_right: Plantilla usada
+
+Tomé como referencia mi proyecto previo desarrollado con Express, **CompraVenta_Artesanias** (URL: https://github.com/Raxont/CompraVenta_Artesanias), del cual utilicé la lógica de sus controladores como guía para la implementación en este proyecto. Ademas, reutilicé parte de la lógica aplicada en middleware como `corsConfig` y `errorHandling`, manteniendo una estructura coherente y facil para mi entendimiento.
 
 ## 👤 Autor
 
