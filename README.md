@@ -474,13 +474,13 @@ curl -X DELETE http://localhost:3001/api/comments/5 \
 #### 1. **JWT en httpOnly Cookies**
 - Mayor seguridad contra XSS, el frontend no puede acceder al token
 
-#### 2. **Re-login **
+#### 2. **Re-login**
 - Implementación más simple, menos complejidad al hacer que el usuario tenga que loguearse nuevamente
 
 #### 3. **Prisma ORM**
 - Type-safety, migraciones automáticas, queries optimizadas
 
-#### 4. **IDs Auto-incrementales **
+#### 4. **IDs Auto-incrementales**
 - Más simple, índices más pequeños, mejor performance
 
 #### 5. **Validaciones en Controller**
@@ -493,7 +493,7 @@ curl -X DELETE http://localhost:3001/api/comments/5 \
 
 ### Frontend
 
-#### 1. **Next.js App Router **
+#### 1. **Next.js App Router**
 - Server Components, mejor performance, futuro de Next.js
 
 #### 2. **React Query**
@@ -502,10 +502,10 @@ curl -X DELETE http://localhost:3001/api/comments/5 \
 #### 3. **dnd-kit**
 - Más moderno, mejor performance, mantenimiento activo
 
-#### 4. **Tailwind CSS **
+#### 4. **Tailwind CSS**
 - Desarrollo rápido, diseño consistente, no CSS muerto
 
-#### 5. **React Markdown **
+#### 5. **React Markdown**
 - Simple, liviano, sin dependencias pesadas
 
 ---
