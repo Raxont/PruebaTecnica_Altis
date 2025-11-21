@@ -92,9 +92,9 @@ export const createComment = async (req: Request, res: Response) => {
     await prisma.activity.create({
       data: {
         issueId,
-        action: 'commented',
-        field: 'comment',
-        newValue: 'New comment added',
+        action: 'added comment',
+        field: null,
+        newValue: null,
       },
     });
 
@@ -205,6 +205,16 @@ export const deleteComment = async (req: Request, res: Response) => {
 
     await prisma.comment.delete({
       where: { id: parseInt(id) },
+    });
+
+    // Crear actividad de eliminación
+    await prisma.activity.create({
+      data: {
+        issueId: existingComment.issueId,
+        action: 'deleted comment',
+        field: null,
+        newValue: null,
+      },
     });
 
     res.json({ message: 'Comment deleted successfully' });

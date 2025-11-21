@@ -260,14 +260,36 @@ export const updateIssue = async (req: Request, res: Response) => {
     const activities = [];
     for (const [field, newValue] of Object.entries(updates)) {
       const oldValue = (existingIssue as any)[field];
-      if (oldValue !== newValue) {
-        activities.push({
-          issueId: issue.id,
-          action: 'updated',
-          field,
-          oldValue: String(oldValue || ''),
-          newValue: String(newValue || ''),
-        });
+      
+      // Comparación especial para arrays (labels)
+      if (field === 'labels') {
+        const oldLabels = Array.isArray(oldValue) ? oldValue.sort().join(',') : '';
+        const newLabels = Array.isArray(newValue) ? newValue.sort().join(',') : '';
+        if (oldLabels !== newLabels) {
+          activities.push({
+            issueId: issue.id,
+            action: 'updated',
+            field,
+            oldValue: oldLabels,
+            newValue: newLabels,
+          });
+        }
+      }
+      // Comparación para valores normales
+      else {
+        // Normalizar null/undefined a string vacío
+        const normalizedOld = oldValue === null || oldValue === undefined ? '' : String(oldValue);
+        const normalizedNew = newValue === null || newValue === undefined ? '' : String(newValue);
+        
+        if (normalizedOld !== normalizedNew) {
+          activities.push({
+            issueId: issue.id,
+            action: 'updated',
+            field,
+            oldValue: normalizedOld,
+            newValue: normalizedNew,
+          });
+        }
       }
     }
 
