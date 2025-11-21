@@ -16,6 +16,7 @@ Sistema de gestión de tickets con tablero Kanban, filtros avanzados, comentario
 - ✅ Rate limiting y CORS configurado
 - ✅ Manejo de errores centralizado
 - ✅ Estructura de carpetas: MVC sin usar los servicios
+- ✅ Se implementó Better Comments para optimizar la claridad semántica y mejorar la interpretabilidad de la lógica del código.
 
 ### Frontend
 - ✅ Tablero Kanban con drag & drop funcional
