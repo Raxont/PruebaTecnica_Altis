@@ -261,8 +261,39 @@ export const updateIssue = async (req: Request, res: Response) => {
     for (const [field, newValue] of Object.entries(updates)) {
       const oldValue = (existingIssue as any)[field];
       
+      // Comparación especial para assigneeId - mostrar nombres
+      if (field === 'assigneeId') {
+        if (oldValue !== newValue) {
+          let oldName = 'Unassigned';
+          let newName = 'Unassigned';
+          
+          if (oldValue) {
+            const oldUser = await prisma.user.findUnique({
+              where: { id: oldValue },
+              select: { name: true },
+            });
+            oldName = oldUser?.name || 'Unknown';
+          }
+          
+          if (newValue) {
+            const newUser = await prisma.user.findUnique({
+              where: { id: newValue as number },
+              select: { name: true },
+            });
+            newName = newUser?.name || 'Unknown';
+          }
+          
+          activities.push({
+            issueId: issue.id,
+            action: 'updated',
+            field: 'assignee',
+            oldValue: oldName,
+            newValue: newName,
+          });
+        }
+      }
       // Comparación especial para arrays (labels)
-      if (field === 'labels') {
+      else if (field === 'labels') {
         const oldLabels = Array.isArray(oldValue) ? oldValue.sort().join(',') : '';
         const newLabels = Array.isArray(newValue) ? newValue.sort().join(',') : '';
         if (oldLabels !== newLabels) {
@@ -277,7 +308,6 @@ export const updateIssue = async (req: Request, res: Response) => {
       }
       // Comparación para valores normales
       else {
-        // Normalizar null/undefined a string vacío
         const normalizedOld = oldValue === null || oldValue === undefined ? '' : String(oldValue);
         const normalizedNew = newValue === null || newValue === undefined ? '' : String(newValue);
         
