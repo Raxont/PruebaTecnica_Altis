@@ -1,9 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { corsConfig } from './middleware/corsConfig.js';
-import { jsonParseErrorHandler, globalErrorHandler } from './middleware/errorHandler.js';
-import { generalLimiter } from './middleware/rateLimit.js';
+import { corsConfig } from './middleware/corsConfig';
+import { jsonParseErrorHandler, globalErrorHandler } from './middleware/errorHandler';
+import { generalLimiter } from './middleware/rateLimit';
+
+import authRoutes from './routes/auth';
+import issuesRoutes from './routes/issues';
 
 dotenv.config();
 
@@ -18,9 +21,9 @@ app.use(cookieParser());
 app.use(jsonParseErrorHandler);
 app.use(generalLimiter);
 
-// Rutas (próximamente)
-// app.use('/api/auth', authRoutes);
-// app.use('/api/issues', authenticateToken, issuesRoutes);
+// Rutas
+app.use('/api/auth', authRoutes);
+app.use('/api/issues', issuesRoutes);
 // app.use('/api/comments', authenticateToken, commentsRoutes);
 
 // Error handler

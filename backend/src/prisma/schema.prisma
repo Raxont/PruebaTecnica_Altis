@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Organization {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -20,11 +20,11 @@ model Organization {
 }
 
 model User {
-  id             String       @id @default(cuid())
+  id             Int          @id @default(autoincrement())
   email          String       @unique
   password       String
   name           String
-  organizationId String       @map("organization_id")
+  organizationId Int          @map("organization_id")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
   
@@ -37,15 +37,15 @@ model User {
 }
 
 model Issue {
-  id          String   @id @default(cuid())
+  id          Int      @id @default(autoincrement())
   title       String
   description String?
   status      Status   @default(TODO)
   priority    Priority @default(MED)
   labels      String[]
-  assigneeId  String?  @map("assignee_id")
-  creatorId   String   @map("creator_id")
-  orgId       String   @map("org_id")
+  assigneeId  Int?     @map("assignee_id")
+  creatorId   Int      @map("creator_id")
+  orgId       Int      @map("org_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   
@@ -61,10 +61,10 @@ model Issue {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   content   String
-  issueId   String   @map("issue_id")
-  authorId  String   @map("author_id")
+  issueId   Int      @map("issue_id")
+  authorId  Int      @map("author_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   
@@ -75,8 +75,8 @@ model Comment {
 }
 
 model Activity {
-  id        String   @id @default(cuid())
-  issueId   String   @map("issue_id")
+  id        Int      @id @default(autoincrement())
+  issueId   Int      @map("issue_id")
   action    String
   field     String?
   oldValue  String?  @map("old_value")
