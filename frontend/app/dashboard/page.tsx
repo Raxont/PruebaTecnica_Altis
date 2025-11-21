@@ -42,7 +42,17 @@ export default function DashboardPage() {
   })
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters({ ...filters, [key]: value })
+    if (key === 'clear') {
+      // Limpiar todos los filtros
+      setFilters({
+        status: '',
+        priority: '',
+        assigneeId: '',
+        search: '',
+      })
+    } else {
+      setFilters({ ...filters, [key]: value })
+    }
     setPage(1)
   }
 

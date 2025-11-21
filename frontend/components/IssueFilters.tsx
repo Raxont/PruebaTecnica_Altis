@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface IssueFiltersProps {
   filters: {
@@ -15,6 +15,11 @@ interface IssueFiltersProps {
 
 export default function IssueFilters({ filters, onFilterChange, users }: IssueFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.search)
+
+  // Sincronizar searchInput cuando filters.search cambie externamente
+  useEffect(() => {
+    setSearchInput(filters.search)
+  }, [filters.search])
 
   const handleSearch = () => {
     onFilterChange('search', searchInput)
@@ -101,6 +106,71 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
           </select>
         </div>
       </div>
+
+      {/* Mostrar filtros activos */}
+      {(filters.search || filters.status || filters.priority || filters.assigneeId) && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-semibold text-gray-700">Active filters:</span>
+            {filters.search && (
+              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                Search: "{filters.search}"
+                <button
+                  onClick={() => {
+                    setSearchInput('')
+                    onFilterChange('search', '')
+                  }}
+                  className="hover:text-blue-900"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.status && (
+              <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+                Status: {filters.status.replace('_', ' ')}
+                <button
+                  onClick={() => onFilterChange('status', '')}
+                  className="hover:text-purple-900"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.priority && (
+              <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+                Priority: {filters.priority}
+                <button
+                  onClick={() => onFilterChange('priority', '')}
+                  className="hover:text-yellow-900"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.assigneeId && (
+              <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                Assignee: {users.find(u => u.id === parseInt(filters.assigneeId))?.name}
+                <button
+                  onClick={() => onFilterChange('assigneeId', '')}
+                  className="hover:text-green-900"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => {
+                setSearchInput('')
+                onFilterChange('clear', '')
+              }}
+              className="text-sm text-red-600 hover:text-red-800 font-medium ml-2"
+            >
+              Clear all
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
