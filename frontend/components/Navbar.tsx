@@ -18,31 +18,29 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center space-x-8">
             <Link href="/dashboard" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">IT</span>
+              <div className="w-10 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">ITK</span>
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                Issue Tracker
+                Issue Tracker Kanban
               </span>
             </Link>
             <div className="flex space-x-1">
-              <Link 
-                href="/dashboard" 
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/dashboard') && !pathname.includes('/board')
+              <Link
+                href="/dashboard"
+                className={`px-4 py-2 rounded-lg text-lg font-medium transition-all duration-200 ${isActive('/dashboard') && !pathname.includes('/board')
                     ? 'bg-blue-50 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 📋 Issues
               </Link>
-              <Link 
-                href="/dashboard/board" 
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/dashboard/board')
+              <Link
+                href="/dashboard/board"
+                className={`px-4 py-2 rounded-lg text-lg font-medium transition-all duration-200 ${isActive('/dashboard/board')
                     ? 'bg-blue-50 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 📊 Board
               </Link>
@@ -61,7 +59,17 @@ export default function Navbar() {
               </div>
               <button
                 onClick={logout}
-                className="text-sm text-gray-600 hover:text-red-600 font-medium transition-colors duration-200"
+                className="
+                  px-4 py-2 
+                  text-sm font-semibold 
+                  text-white 
+                  bg-red-500 
+                  rounded-lg 
+                  hover:bg-red-600 
+                  active:bg-red-700 
+                  transition 
+                  shadow-sm
+                "
               >
                 Logout
               </button>
