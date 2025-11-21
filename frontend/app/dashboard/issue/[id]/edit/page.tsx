@@ -85,26 +85,36 @@ export default function EditIssuePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-600">Loading...</div>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600 font-medium">Loading issue...</p>
       </div>
     )
   }
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Edit Issue</h1>
+      <div className="mb-8">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors mb-4"
+        >
+          ← Back
+        </button>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Edit Issue</h1>
+        <p className="text-gray-600">Update the issue details</p>
+      </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+          <p className="font-medium">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-sm space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Title *
+          <label htmlFor="title" className="block text-sm font-bold text-gray-900 mb-2">
+            Title <span className="text-red-500">*</span>
           </label>
           <input
             id="title"
@@ -112,33 +122,34 @@ export default function EditIssuePage() {
             required
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
           />
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description (Markdown supported)
+          <label htmlFor="description" className="block text-sm font-bold text-gray-900 mb-2">
+            Description
+            <span className="text-gray-500 font-normal ml-2">(Markdown supported)</span>
           </label>
           <textarea
             id="description"
-            rows={6}
+            rows={8}
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field resize-none font-mono text-sm"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+            <label htmlFor="status" className="block text-sm font-bold text-gray-900 mb-2">
+              📊 Status
             </label>
             <select
               id="status"
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
             >
               <option value="TODO">To Do</option>
               <option value="IN_PROGRESS">In Progress</option>
@@ -147,14 +158,14 @@ export default function EditIssuePage() {
           </div>
 
           <div>
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-              Priority
+            <label htmlFor="priority" className="block text-sm font-bold text-gray-900 mb-2">
+              🎯 Priority
             </label>
             <select
               id="priority"
               value={formData.priority}
               onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
             >
               <option value="LOW">Low</option>
               <option value="MED">Medium</option>
@@ -163,14 +174,14 @@ export default function EditIssuePage() {
           </div>
 
           <div>
-            <label htmlFor="assignee" className="block text-sm font-medium text-gray-700 mb-1">
-              Assignee
+            <label htmlFor="assignee" className="block text-sm font-bold text-gray-900 mb-2">
+              👤 Assignee
             </label>
             <select
               id="assignee"
               value={formData.assigneeId}
               onChange={(e) => setFormData({ ...formData, assigneeId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
             >
               <option value="">Unassigned</option>
               {usersData?.map((user) => (
@@ -183,31 +194,38 @@ export default function EditIssuePage() {
         </div>
 
         <div>
-          <label htmlFor="labels" className="block text-sm font-medium text-gray-700 mb-1">
-            Labels (comma separated)
+          <label htmlFor="labels" className="block text-sm font-bold text-gray-900 mb-2">
+            🏷️ Labels
+            <span className="text-gray-500 font-normal ml-2">(comma separated)</span>
           </label>
           <input
             id="labels"
             type="text"
             value={formData.labels}
             onChange={(e) => setFormData({ ...formData, labels: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="bug, feature, urgent"
+            className="input-field"
           />
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 pt-4 border-t border-gray-200">
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition"
+            className="btn-primary flex-1"
           >
-            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Saving...
+              </span>
+            ) : (
+              '✓ Save Changes'
+            )}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+            className="btn-secondary"
           >
             Cancel
           </button>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
 import Link from 'next/link'
-import React from 'react'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -19,8 +18,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Por ahora hardcodeamos la org Acme (ID: 1)
-    // En producción harías un endpoint GET /organizations
     setOrganizations([{ id: 1, name: 'Acme' }])
     setFormData(prev => ({ ...prev, organizationId: '1' }))
   }, [])
@@ -44,20 +41,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+            <span className="text-white font-bold text-2xl">IT</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
+          <p className="text-gray-500 text-sm mt-2">Join your team today</p>
+        </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+            <p className="text-sm font-medium">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+              Full Name
             </label>
             <input
               id="name"
@@ -65,14 +68,14 @@ export default function RegisterPage() {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              Email Address
             </label>
             <input
               id="email"
@@ -80,13 +83,13 @@ export default function RegisterPage() {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               placeholder="john@acme.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
               Password
             </label>
             <input
@@ -96,13 +99,14 @@ export default function RegisterPage() {
               minLength={6}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               placeholder="••••••••"
             />
+            <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
           </div>
 
           <div>
-            <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="organization" className="block text-sm font-semibold text-gray-700 mb-2">
               Organization
             </label>
             <select
@@ -110,7 +114,7 @@ export default function RegisterPage() {
               required
               value={formData.organizationId}
               onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
             >
               {organizations.map((org) => (
                 <option key={org.id} value={org.id}>
@@ -123,18 +127,27 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+            className="btn-primary w-full"
           >
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Creating account...
+              </span>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-        </p>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

@@ -27,11 +27,11 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Search
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            🔍 Search
           </label>
           <div className="flex gap-2">
             <input
@@ -40,11 +40,11 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field flex-1"
             />
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              className="btn-primary whitespace-nowrap"
             >
               Search
             </button>
@@ -52,15 +52,15 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            📊 Status
           </label>
           <select
             value={filters.status}
             onChange={(e) => onFilterChange('status', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
           >
-            <option value="">All</option>
+            <option value="">All Statuses</option>
             <option value="TODO">To Do</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="DONE">Done</option>
@@ -68,15 +68,15 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            🎯 Priority
           </label>
           <select
             value={filters.priority}
             onChange={(e) => onFilterChange('priority', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
           >
-            <option value="">All</option>
+            <option value="">All Priorities</option>
             <option value="LOW">Low</option>
             <option value="MED">Medium</option>
             <option value="HIGH">High</option>
@@ -84,15 +84,15 @@ export default function IssueFilters({ filters, onFilterChange, users }: IssueFi
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Assignee
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            👤 Assignee
           </label>
           <select
             value={filters.assigneeId}
             onChange={(e) => onFilterChange('assigneeId', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
           >
-            <option value="">All</option>
+            <option value="">All Assignees</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.name}
