@@ -7,6 +7,7 @@ import { IssuesResponse, User } from '@/types'
 import IssueFilters from '@/components/IssueFilters'
 import IssueCard from '@/components/IssueCard'
 import Link from 'next/link'
+import { useUsers } from '@/hooks/useUsers'
 
 export default function DashboardPage() {
   const [filters, setFilters] = useState({
@@ -17,14 +18,7 @@ export default function DashboardPage() {
   })
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
-
-  const { data: usersData } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const { data } = await api.get('/auth/me')
-      return [data]
-    },
-  })
+  const { data: usersData } = useUsers()
 
   const { data, isLoading } = useQuery<IssuesResponse>({
     queryKey: ['issues', filters.status, filters.priority, filters.assigneeId, filters.search, page, limit],

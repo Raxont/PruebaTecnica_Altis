@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { User } from '@/types'
+import { useUsers } from '@/hooks/useUsers'
 
 export default function NewIssuePage() {
   const router = useRouter()
@@ -18,13 +19,8 @@ export default function NewIssuePage() {
   })
   const [error, setError] = useState('')
 
-  const { data: usersData } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const { data } = await api.get('/auth/me')
-      return [data]
-    },
-  })
+  const { data: usersData } = useUsers()
+
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { Issue, User } from '@/types'
+import { useUsers } from '@/hooks/useUsers'
 
 export default function EditIssuePage() {
   const params = useParams()
@@ -30,13 +31,8 @@ export default function EditIssuePage() {
     },
   })
 
-  const { data: usersData } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const { data } = await api.get('/auth/me')
-      return [data]
-    },
-  })
+  const { data: usersData } = useUsers()
+
 
   useEffect(() => {
     if (issue) {
