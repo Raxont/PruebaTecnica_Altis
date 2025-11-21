@@ -4,11 +4,18 @@ import prisma from '../config/database';
 import { generateToken } from '../utils/jwt';
 import { RegisterDTO, LoginDTO } from '../types/index';
 
+/**
+ * Registra un nuevo usuario en el sistema
+ * @param {Request} req - Solicitud HTTP con datos del usuario (email, password, name, organizationId)
+ * @param {Response} res - Respuesta HTTP con el usuario creado y token JWT
+ * @returns {Promise<void>}
+ * ! Valida que el email no esté registrado y que la organización exista
+ */
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, password, name, organizationId }: RegisterDTO = req.body;
 
-    // Validaciones
+    // * Validaciones de campos requeridos
     if (!email || !password || !name || !organizationId) {
       return res.status(400).json({
         error: 'Bad Request',
@@ -16,7 +23,7 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar si el usuario ya existe
+    // ? Verificar si el usuario ya existe
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -28,7 +35,7 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar que la organización existe
+    // ? Verificar que la organización existe
     const org = await prisma.organization.findUnique({
       where: { id: organizationId },
     });
@@ -40,10 +47,10 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    // Hash password
+    // * Hash del password con bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear usuario
+    // * Crear usuario en la base de datos
     const user = await prisma.user.create({
       data: {
         email,
@@ -59,14 +66,14 @@ export const register = async (req: Request, res: Response) => {
       },
     });
 
-    // Generar token
+    // * Generar token JWT
     const token = generateToken({
       id: user.id,
       email: user.email,
       organizationId: user.organizationId,
     });
 
-    // Establecer cookie
+    // * Establecer cookie httpOnly con el token
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -87,11 +94,18 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Inicia sesión de un usuario existente
+ * @param {Request} req - Solicitud HTTP con credenciales (email, password)
+ * @param {Response} res - Respuesta HTTP con datos del usuario y token JWT
+ * @returns {Promise<void>}
+ * ! Valida credenciales antes de generar el token
+ */
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password }: LoginDTO = req.body;
 
-    // Validaciones
+    // * Validaciones de campos requeridos
     if (!email || !password) {
       return res.status(400).json({
         error: 'Bad Request',
@@ -99,7 +113,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    // Buscar usuario
+    // ? Buscar usuario por email
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -111,7 +125,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar password
+    // * Verificar password con bcrypt
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
@@ -121,14 +135,14 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    // Generar token
+    // * Generar token JWT
     const token = generateToken({
       id: user.id,
       email: user.email,
       organizationId: user.organizationId,
     });
 
-    // Establecer cookie
+    // * Establecer cookie httpOnly
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -154,11 +168,24 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Cierra la sesión del usuario eliminando la cookie
+ * @param {Request} req - Solicitud HTTP
+ * @param {Response} res - Respuesta HTTP
+ * @returns {void}
+ */
 export const logout = (req: Request, res: Response) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
 };
 
+/**
+ * Obtiene los datos del usuario autenticado actual
+ * @param {Request} req - Solicitud HTTP con datos del usuario en req.user
+ * @param {Response} res - Respuesta HTTP con datos del usuario
+ * @returns {Promise<void>}
+ * ! Requiere que el usuario esté autenticado (middleware)
+ */
 export const me = async (req: Request, res: Response) => {
   try {
     const user = await prisma.user.findUnique({

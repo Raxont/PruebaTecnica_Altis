@@ -2,6 +2,14 @@ import { Request, Response } from 'express';
 import prisma from '../config/database';
 import { CreateIssueDTO, UpdateIssueDTO, IssueFilters } from '../types/index';
 
+/**
+ * Obtiene una lista paginada de issues con filtros opcionales
+ * @param {Request} req - Solicitud HTTP con query params (status, priority, assigneeId, search, page, limit)
+ * @param {Response} res - Respuesta HTTP con issues y datos de paginación
+ * @returns {Promise<void>}
+ * ! Solo retorna issues de la organización del usuario autenticado
+ * ? Soporta filtros combinables y búsqueda por texto
+ */
 export const getIssues = async (req: Request, res: Response) => {
   try {
     const {
@@ -17,7 +25,7 @@ export const getIssues = async (req: Request, res: Response) => {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Filtros
+    // * Construcción dinámica de filtros
     const where: any = {
       orgId: req.user!.organizationId,
     };
@@ -25,6 +33,8 @@ export const getIssues = async (req: Request, res: Response) => {
     if (status) where.status = status;
     if (priority) where.priority = priority;
     if (assigneeId) where.assigneeId = parseInt(assigneeId);
+
+    // * Búsqueda por texto en título o descripción
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
@@ -32,7 +42,7 @@ export const getIssues = async (req: Request, res: Response) => {
       ];
     }
 
-    // Consulta con paginación
+    // * Consulta paginada con conteo total
     const [issues, total] = await Promise.all([
       prisma.issue.findMany({
         where,
@@ -72,6 +82,13 @@ export const getIssues = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Obtiene el detalle completo de un issue específico
+ * @param {Request} req - Solicitud HTTP con el ID del issue en params
+ * @param {Response} res - Respuesta HTTP con datos del issue, comentarios y actividades
+ * @returns {Promise<void>}
+ * ! Verifica que el issue pertenezca a la organización del usuario
+ */
 export const getIssueById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -120,6 +137,14 @@ export const getIssueById = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Crea un nuevo issue en el sistema
+ * @param {Request} req - Solicitud HTTP con datos del issue (title, description, status, priority, assigneeId, labels)
+ * @param {Response} res - Respuesta HTTP con el issue creado
+ * @returns {Promise<void>}
+ * ! Valida que el título no esté vacío y que el assignee pertenezca a la organización
+ * ? Crea automáticamente una actividad de creación
+ */
 export const createIssue = async (req: Request, res: Response) => {
   try {
     const {
@@ -131,7 +156,7 @@ export const createIssue = async (req: Request, res: Response) => {
       labels = [],
     }: CreateIssueDTO = req.body;
 
-    // Validaciones
+    // * Validación de título requerido
     if (!title || title.trim() === '') {
       return res.status(400).json({
         error: 'Bad Request',
@@ -139,7 +164,7 @@ export const createIssue = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar assignee si existe
+    // ? Verificar que el assignee exista y pertenezca a la organización
     if (assigneeId) {
       const assignee = await prisma.user.findFirst({
         where: {
@@ -156,6 +181,7 @@ export const createIssue = async (req: Request, res: Response) => {
       }
     }
 
+    // * Crear issue en la base de datos
     const issue = await prisma.issue.create({
       data: {
         title,
@@ -177,7 +203,7 @@ export const createIssue = async (req: Request, res: Response) => {
       },
     });
 
-    // Crear actividad
+    // * Registrar actividad de creación
     await prisma.activity.create({
       data: {
         issueId: issue.id,
@@ -197,12 +223,20 @@ export const createIssue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Actualiza un issue existente
+ * @param {Request} req - Solicitud HTTP con ID del issue y datos a actualizar
+ * @param {Response} res - Respuesta HTTP con el issue actualizado
+ * @returns {Promise<void>}
+ * ! Verifica que el issue pertenezca a la organización del usuario
+ * ? Crea actividades automáticas para cada campo modificado
+ */
 export const updateIssue = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updates: UpdateIssueDTO = req.body;
 
-    // Verificar que el issue existe y pertenece a la org
+    // ? Verificar que el issue exista y pertenezca a la organización
     const existingIssue = await prisma.issue.findFirst({
       where: {
         id: parseInt(id),
@@ -217,7 +251,7 @@ export const updateIssue = async (req: Request, res: Response) => {
       });
     }
 
-    // Validar title si se actualiza
+    // * Validar title si se actualiza
     if (updates.title !== undefined && updates.title.trim() === '') {
       return res.status(400).json({
         error: 'Bad Request',
@@ -225,7 +259,7 @@ export const updateIssue = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar assignee si se actualiza
+    // ? Verificar assignee si se actualiza
     if (updates.assigneeId) {
       const assignee = await prisma.user.findFirst({
         where: {
@@ -242,7 +276,7 @@ export const updateIssue = async (req: Request, res: Response) => {
       }
     }
 
-    // Actualizar issue
+    // * Actualizar issue
     const issue = await prisma.issue.update({
       where: { id: parseInt(id) },
       data: updates,
@@ -256,12 +290,12 @@ export const updateIssue = async (req: Request, res: Response) => {
       },
     });
 
-    // Crear actividades para cambios
+    // * Crear actividades para cada campo modificado
     const activities = [];
     for (const [field, newValue] of Object.entries(updates)) {
       const oldValue = (existingIssue as any)[field];
       
-      // Comparación especial para assigneeId - mostrar nombres
+      // * Manejo especial para assigneeId - mostrar nombres en lugar de IDs
       if (field === 'assigneeId') {
         if (oldValue !== newValue) {
           let oldName = 'Unassigned';
@@ -292,7 +326,8 @@ export const updateIssue = async (req: Request, res: Response) => {
           });
         }
       }
-      // Comparación especial para arrays (labels)
+
+      // * Manejo especial para arrays (labels)
       else if (field === 'labels') {
         const oldLabels = Array.isArray(oldValue) ? oldValue.sort().join(',') : '';
         const newLabels = Array.isArray(newValue) ? newValue.sort().join(',') : '';
@@ -306,7 +341,8 @@ export const updateIssue = async (req: Request, res: Response) => {
           });
         }
       }
-      // Comparación para valores normales
+
+      // * Comparación para valores normales
       else {
         const normalizedOld = oldValue === null || oldValue === undefined ? '' : String(oldValue);
         const normalizedNew = newValue === null || newValue === undefined ? '' : String(newValue);
@@ -323,6 +359,7 @@ export const updateIssue = async (req: Request, res: Response) => {
       }
     }
 
+    // * Guardar actividades en batch
     if (activities.length > 0) {
       await prisma.activity.createMany({ data: activities });
     }
@@ -337,10 +374,18 @@ export const updateIssue = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Elimina un issue del sistema
+ * @param {Request} req - Solicitud HTTP con el ID del issue a eliminar
+ * @param {Response} res - Respuesta HTTP confirmando la eliminación
+ * @returns {Promise<void>}
+ * ! Elimina en cascada todos los comentarios y actividades relacionados
+ */
 export const deleteIssue = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
+    // ? Verificar que el issue exista y pertenezca a la organización
     const issue = await prisma.issue.findFirst({
       where: {
         id: parseInt(id),
@@ -355,6 +400,7 @@ export const deleteIssue = async (req: Request, res: Response) => {
       });
     }
 
+    // * Eliminar issue (cascada automática en Prisma)
     await prisma.issue.delete({ where: { id: parseInt(id) } });
 
     res.json({ message: 'Issue deleted successfully' });
